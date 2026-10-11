@@ -21,9 +21,34 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api/register", async(req, res) => {
-    const hashedPass = await bcrypt.hash(req.body.password, 10)
-    const user = await User.create({...req.body, password:hashedPass})
-    res.json(user)
+   try {
+        const {name, email, password} = req.body
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                message: "Please fill all the fields"
+            })
+        }
+        const hashedPass = await bcrypt.hash(req.body.password, 10)
+        const user = await User.create({
+            ...req.body,
+            password:hashedPass
+        })
+    
+        res.status(201).json({
+            message: "User registered successfully"
+        })
+   } catch(err) {
+        console.log(err)
+        if (err.code === 11000) {
+            return res.status(409).json({
+                message: "Email already registered"
+            })
+        }
+
+        res.status(500).json({
+            message: "Server error"
+        })
+   }
 })
 
 app.listen(PORT, () => {
