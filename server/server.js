@@ -28,6 +28,12 @@ app.post("/api/register", async(req, res) => {
                 message: "Please fill all the fields"
             })
         }
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
+            return res.status(400).json({
+                message: "Please enter a valid email"
+            })
+        }
+        
         const hashedPass = await bcrypt.hash(req.body.password, 10)
         const user = await User.create({
             ...req.body,
