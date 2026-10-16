@@ -33,6 +33,11 @@ app.post("/api/register", async(req, res) => {
                 message: "Please enter a valid email"
             })
         }
+        if (password.length < 6) {
+            return res.status(400).json({
+                message: "Password must be of atleast 6 characters long"
+            })
+        }
         
         const hashedPass = await bcrypt.hash(req.body.password, 10)
         const user = await User.create({
@@ -48,6 +53,12 @@ app.post("/api/register", async(req, res) => {
         if (err.code === 11000) {
             return res.status(409).json({
                 message: "Email already registered"
+            })
+        }
+
+        if (err.name === "ValidationError") {
+            return res.status(400).json({
+                message: err.message
             })
         }
 
