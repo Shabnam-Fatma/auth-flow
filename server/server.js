@@ -68,6 +68,13 @@ app.post("/api/register", async(req, res) => {
    }
 })
 
+app.post("/api/login", async (req, res) => {
+    const {email, password} = req.body
+    res.json({
+        message: "Login successful"
+    })
+}) 
+
 app.listen(PORT, () => {
     console.log(`Server is live... on ${PORT}`);
 });
