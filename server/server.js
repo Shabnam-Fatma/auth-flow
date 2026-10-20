@@ -70,6 +70,14 @@ app.post("/api/register", async(req, res) => {
 
 app.post("/api/login", async (req, res) => {
     const {email, password} = req.body
+    const user = await User.findOne({email})
+    if (!user) {
+        return res.status(401).json({
+            message: "Invalid email or password"
+        })
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+    console.log(isPasswordValid)
     res.json({
         message: "Login successful"
     })
