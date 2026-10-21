@@ -70,18 +70,25 @@ app.post("/api/register", async(req, res) => {
 
 app.post("/api/login", async (req, res) => {
     const {email, password} = req.body
-    const user = await User.findOne({email})
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
         return res.status(401).json({
             message: "Invalid email or password"
         })
     }
+    console.log("Found user email:", user?.email);
+    console.log("Found user password:", user?.password);
     const isPasswordValid = await bcrypt.compare(password, user.password)
+    if (!isPasswordValid) {
+        return res.status(401).json({
+            message: "Invalid email or password"
+        })
+    }
     console.log(isPasswordValid)
     res.json({
         message: "Login successful"
     })
-}) 
+})
 
 app.listen(PORT, () => {
     console.log(`Server is live... on ${PORT}`);
