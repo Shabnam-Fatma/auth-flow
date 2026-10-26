@@ -70,24 +70,36 @@ app.post("/api/register", async(req, res) => {
 
 app.post("/api/login", async (req, res) => {
     const {email, password} = req.body
-    const user = await User.findOne({ email }).select("+password");
-    if (!user) {
-        return res.status(401).json({
-            message: "Invalid email or password"
+    if (!email || !password) {
+        return res.status(400).json({
+            message: "Please fill all the fields"})
+    }
+    try {
+        const user = await User.findOne({ email }).select("+password");
+        if (!user) {
+            return res.status(401).json({
+                message: "Invalid email or password"
+            })
+        }
+        console.log("Found user email:", user?.email);
+        console.log("Found user password:", user?.password);
+        const isPasswordValid = await bcrypt.compare(password, user.password)
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                message: "Invalid email or password"
+            })
+        }
+        console.log(isPasswordValid)
+        res.json({
+            message: "Login successful"
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Server error",
+            error: err.message
         })
     }
-    console.log("Found user email:", user?.email);
-    console.log("Found user password:", user?.password);
-    const isPasswordValid = await bcrypt.compare(password, user.password)
-    if (!isPasswordValid) {
-        return res.status(401).json({
-            message: "Invalid email or password"
-        })
-    }
-    console.log(isPasswordValid)
-    res.json({
-        message: "Login successful"
-    })
 })
 
 app.listen(PORT, () => {
