@@ -22,7 +22,12 @@ mongoose.connect("mongodb://127.0.0.1:27017/mern_auth")
 })
 
 function verifyToken (req, res, next) {
-    
+    const authHeader = req.headers.authorization
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({
+            message: "Access denied, No token provided"
+        })
+    }
 }
 
 app.get("/", (req, res) => {
