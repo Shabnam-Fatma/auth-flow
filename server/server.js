@@ -9,15 +9,21 @@ const jwt = require("jsonwebtoken")
 const app = express();
 app.use(express.json())
 
+const PORT = 3000;
+
 mongoose.connect("mongodb://127.0.0.1:27017/mern_auth")
 .then(()=> {
-    console.log("MongoDB connected successfully!")
+    app.listen(PORT, () => {
+        console.log(`MongoDB connected successfully!, Server is live... on ${PORT}`);
+    });
 })
 .catch((err) => {
     console.log("MongoDB connection failed!", err)
 })
 
-const PORT = 3000;
+function verifyToken (req, res, next) {
+    
+}
 
 app.get("/", (req, res) => {
     res.send("Backend is working!");
@@ -61,7 +67,7 @@ app.post("/api/register", async(req, res) => {
 
         if (err.name === "ValidationError") {
             return res.status(400).json({
-                message: err.message
+                message: err
             })
         }
 
@@ -90,7 +96,6 @@ app.post("/api/login", async (req, res) => {
                 message: "Invalid email or password"
             })
         }
-        console.log(isPasswordValid)
         const token = jwt.sign(
             {userId: user._id},
             process.env.JWT_SECRET,
@@ -104,11 +109,7 @@ app.post("/api/login", async (req, res) => {
         console.log(err)
         res.status(500).json({
             message: "Server error",
-            error: err.message
+            error: err
         })
     }
 })
-
-app.listen(PORT, () => {
-    console.log(`Server is live... on ${PORT}`);
-});
