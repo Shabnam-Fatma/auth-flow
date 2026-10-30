@@ -28,10 +28,25 @@ function verifyToken (req, res, next) {
             message: "Access denied, No token provided"
         })
     }
+    const token = authHeader.split(" ")[1]
+
+    let decoded;
+    try { 
+        decoded = jwt.verify(token, process.env.JWT_SECRET)
+    } catch (err) {
+        return res.status(401).json({
+            message: "Invalid or expired token"
+        })
+    }
+    req.user = decoded
+    next()
 }
 
-app.get("/", (req, res) => {
-    res.send("Backend is working!");
+app.get("/api/profile", verifyToken, (req, res) => {
+    res.status(200).send({
+        message: "Welcome to your profile",
+        userId: req.user.userId
+    });
 });
 
 app.post("/api/register", async(req, res) => {
