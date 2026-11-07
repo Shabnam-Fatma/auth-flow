@@ -42,10 +42,14 @@ function verifyToken (req, res, next) {
     next()
 }
 
-app.get("/api/profile", verifyToken, (req, res) => {
-    res.status(200).send({
-        message: "Welcome to your profile",
-        userId: req.user.userId
+app.get("/api/profile", verifyToken, async (req, res) => {
+    const user = await User.findById(req.user.userId)
+    res.status(200).json({
+        message: "Profile fetched successfully",
+        user: {
+            name: user.name,
+            email: user.email
+        }
     });
 });
 
