@@ -6,20 +6,18 @@ const User = require("./models/User")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 
+const connectDB = require("./config/db");
+
 const app = express();
 app.use(express.json())
 
 const PORT = 3000;
 
-mongoose.connect("mongodb://127.0.0.1:27017/mern_auth")
-.then(()=> {
+connectDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`MongoDB connected successfully!, Server is live... on ${PORT}`);
+        console.log(`Server is live on port ${PORT}`);
     });
-})
-.catch((err) => {
-    console.log("MongoDB connection failed!", err)
-})
+});
 
 function verifyToken (req, res, next) {
     const authHeader = req.headers.authorization
