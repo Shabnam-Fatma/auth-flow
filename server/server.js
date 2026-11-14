@@ -1,12 +1,11 @@
 require("dotenv").config()
 
 const express = require("express");
-const mongoose = require("mongoose");
 const User = require("./models/User")
 const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
 
 const connectDB = require("./config/db");
+const verifyToken = require("./middleware/authMiddleware")
 
 const app = express();
 app.use(express.json())
@@ -18,27 +17,6 @@ connectDB().then(() => {
         console.log(`Server is live on port ${PORT}`);
     });
 });
-
-function verifyToken (req, res, next) {
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({
-            message: "Access denied, No token provided"
-        })
-    }
-    const token = authHeader.split(" ")[1]
-
-    let decoded;
-    try { 
-        decoded = jwt.verify(token, process.env.JWT_SECRET)
-    } catch (err) {
-        return res.status(401).json({
-            message: "Invalid or expired token"
-        })
-    }
-    req.user = decoded
-    next()
-}
 
 app.get("/api/profile", verifyToken, async (req, res) => {
     
