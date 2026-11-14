@@ -1,11 +1,10 @@
 require("dotenv").config()
 
 const express = require("express");
-const User = require("./models/User")
-const bcrypt = require("bcryptjs")
 
 const connectDB = require("./config/db");
 const verifyToken = require("./middleware/authMiddleware")
+
 
 const app = express();
 app.use(express.json())
