@@ -4,10 +4,13 @@ const express = require("express");
 
 const connectDB = require("./config/db");
 const verifyToken = require("./middleware/authMiddleware")
-
+const authRoutes = require("./routes/authRoutes")
+const profileRoutes = require("./routes/profileRoutes")
 
 const app = express();
 app.use(express.json())
+app.use("/api", authRoutes)
+app.use("/api", profileRoutes)
 
 const PORT = 3000;
 
