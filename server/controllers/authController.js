@@ -1,4 +1,4 @@
-const User = require("./models/User")
+const User = require("../models/User")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken");
 
@@ -59,30 +59,37 @@ const loginUser = async (req, res) => {
 
     if (!email || !password) {
         return res.status(400).json({
-            message: "Please fill all the fields"})
+            message: "Please fill all the fields"
+        })
     }
+
     try {
         const user = await User.findOne({ email }).select("+password");
+
         if (!user) {
             return res.status(401).json({
                 message: "Invalid email or password"
             })
         }
+
         const isPasswordValid = await bcrypt.compare(password, user.password)
         if (!isPasswordValid) {
             return res.status(401).json({
                 message: "Invalid email or password"
             })
         }
+
         const token = jwt.sign(
             {userId: user._id},
             process.env.JWT_SECRET,
             {expiresIn: "10m"}
         )
+
         return res.status(200).json({
             message: "Login successful",
             token: token
         })
+        
     } catch (err) {
         console.log(err)
         res.status(500).json({

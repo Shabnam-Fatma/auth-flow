@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 function verifyToken(req, res, next) {
+
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -22,6 +23,7 @@ function verifyToken(req, res, next) {
     }
 
     req.user = decoded;
+    
     next();
 }
 
