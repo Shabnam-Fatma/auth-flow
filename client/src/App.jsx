@@ -16,6 +16,32 @@ function App() {
         [name]: value,
       }))
     }
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      const {name, email, password, confirmPassword} = formData;
+      if (!name.trim() || !email.trim() || !password || !confirmPassword) {
+        alert("All fields are required")
+        return
+      }
+
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters long")
+        return
+      }
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match")
+        return
+      }
+
+      console.log("Registration data:", {
+        name,
+        email,
+        password,
+      });
+    }
+
   return (
     <>
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -36,7 +62,7 @@ function App() {
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
 
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmit}>
 
               {/* Name */}
               <div>
